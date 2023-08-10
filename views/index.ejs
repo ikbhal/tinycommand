@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>Unix Command Runner</title>
+    <style>
+        .output {
+            white-space: pre-line;
+        }
+    </style>
 </head>
 <body>
     <h1>Rontohub Unix Command Runner</h1>
@@ -10,7 +15,7 @@
         <textarea name="command" placeholder="Enter Unix command" rows="10" cols="50"></textarea><br/>
     </form>
     <% if (message) { %>
-        <div><%= message %></div>
+        <div class="output"><%= message %></div>
     <% } %>
 </body>
 </html>
