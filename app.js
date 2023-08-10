@@ -3,10 +3,11 @@ const bodyParser = require('body-parser');
 const flash = require('connect-flash');
 const exec = require('child_process').exec;
 const path = require('path');
+const fs = require('fs');
 const session = require('express-session');
 
 const app = express();
-const port = 3019; // Change the port to 3019
+const port = 3019;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,23 +26,61 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Routes
-app.get('/', (req, res) => {
-    res.render('index', { message: req.flash('message') });
+app.get('/', async (req, res) => {
+    try {
+        const history = getCommandHistory();
+        res.render('index', { message: req.flash('message'), history });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred');
+    }
 });
 
-app.post('/runCommand', (req, res) => {
+app.post('/runCommand', async (req, res) => {
     const command = req.body.command;
     const sudoCommand = `sudo ${command}`;
 
-    exec(sudoCommand, (error, stdout, stderr) => {
-        if (error) {
-            req.flash('message', `Error: ${stderr}`);
-        } else {
-            req.flash('message', `Output: ${stdout}`);
-        }
-        res.redirect('/');
-    });
+    try {
+        const { stdout, stderr } = await executeCommand(sudoCommand);
+        saveCommandHistory(command);
+        req.flash('message', `Output: ${stdout}`);
+    } catch (error) {
+        req.flash('message', `Error: ${error.message}`);
+    }
+
+    res.redirect('/');
 });
+
+// Functions to execute command, save history, and retrieve history
+const historyFilePath = path.join(__dirname, 'command_history.json');
+
+function saveCommandHistory(command) {
+    let history = getCommandHistory();
+    history.unshift({ command, timestamp: new Date().toISOString() });
+
+    fs.writeFileSync(historyFilePath, JSON.stringify(history, null, 2));
+}
+
+function getCommandHistory() {
+    try {
+        const content = fs.readFileSync(historyFilePath, 'utf8');
+        return JSON.parse(content);
+    } catch (error) {
+        return [];
+    }
+}
+
+async function executeCommand(command) {
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve({ stdout, stderr });
+            }
+        });
+    });
+}
 
 // Start the server
 app.listen(port, () => {

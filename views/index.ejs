@@ -14,6 +14,14 @@
         <button type="submit">Run Command</button><br/>
         <textarea name="command" placeholder="Enter Unix command" rows="10" cols="50"></textarea><br/>
     </form>
+    <% if (history.length > 0) { %>
+        <h2>Command History:</h2>
+        <ul>
+            <% history.forEach(item => { %>
+                <li><%= item.command %> - <%= item.timestamp %></li>
+            <% }); %>
+        </ul>
+    <% } %>
     <% if (message) { %>
         <div class="output"><%= message %></div>
     <% } %>
