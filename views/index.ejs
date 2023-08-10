@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unix Command Runner</title>
+</head>
+<body>
+    <h1>Unix Command Runner</h1>
+    <form action="/runCommand" method="post">
+        <input type="text" name="command" placeholder="Enter Unix command" />
+        <button type="submit">Run Command</button>
+    </form>
+    <% if (message) { %>
+        <div><%= message %></div>
+    <% } %>
+</body>
+</html>

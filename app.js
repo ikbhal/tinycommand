@@ -1,34 +1,36 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { exec } = require('child_process');
 const flash = require('connect-flash');
+const exec = require('child_process').exec;
 
 const app = express();
-const port = 3019; // Change the port to 3019
+const port = 3000;
 
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(flash());
 
+// Routes
 app.get('/', (req, res) => {
-    const flashMessage = req.flash('success');
-    res.render('index', { flashMessage });
+    res.render('index.ejs', { message: req.flash('message') });
 });
 
 app.post('/runCommand', (req, res) => {
     const command = req.body.command;
+    const sudoCommand = `sudo ${command}`;
 
-    exec(`sudo ${command}`, (error, stdout, stderr) => {
+    exec(sudoCommand, (error, stdout, stderr) => {
         if (error) {
-            req.flash('error', stderr);
-            res.redirect('/');
+            req.flash('message', `Error: ${stderr}`);
         } else {
-            req.flash('success', 'Command executed successfully.');
-            res.redirect(`/?command=${encodeURIComponent(command)}&output=${encodeURIComponent(stdout)}`);
+            req.flash('message', `Output: ${stdout}`);
         }
+        res.redirect('/');
     });
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
