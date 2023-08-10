@@ -2,14 +2,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
 const exec = require('child_process').exec;
-const path = require('path'); // Import the path module
+const path = require('path');
+const session = require('express-session');
 
 const app = express();
-const port = 3000;
+const port = 3019; // Change the port to 3019
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(
+    session({
+        secret: 'muhammed',
+        resave: false,
+        saveUninitialized: true
+    })
+);
 app.use(flash());
 
 // Set EJS as the view engine and configure views directory
@@ -18,7 +26,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 app.get('/', (req, res) => {
-    res.render('index', { message: req.flash('message') }); // 'index' refers to index.ejs
+    res.render('index', { message: req.flash('message') });
 });
 
 app.post('/runCommand', (req, res) => {
