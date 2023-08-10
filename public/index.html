@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Command Runner</title>
+</head>
+<body>
+    <h1>Run Unix Commands with Sudo</h1>
+    
+    <% if (flashMessage) { %>
+        <div class="flash-message success"><%= flashMessage %></div>
+    <% } %>
+    
+    <form action="/runCommand" method="post">
+        <label for="command">Enter Command:</label>
+        <input type="text" id="command" name="command" required>
+        <button type="submit">Run Command</button>
+    </form>
+    
+    <% if (command && output) { %>
+        <h2>Command Output:</h2>
+        <pre><%= output %></pre>
+    <% } %>
+
+    <script>
+        // ... Your existing script ...
+    </script>
+</body>
+</html>
