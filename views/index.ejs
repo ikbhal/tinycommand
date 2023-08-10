@@ -6,8 +6,8 @@
 <body>
     <h1>Rontohub Unix Command Runner</h1>
     <form action="/runCommand" method="post">
-        <input type="text" name="command" placeholder="Enter Unix command" />
-        <button type="submit">Run Command</button>
+        <button type="submit">Run Command</button><br/>
+        <textarea name="command" placeholder="Enter Unix command" rows="10" cols="50"></textarea><br/>
     </form>
     <% if (message) { %>
         <div><%= message %></div>
