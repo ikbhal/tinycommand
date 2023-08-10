@@ -63,12 +63,17 @@ function saveCommandHistory(command) {
 
 function getCommandHistory() {
     try {
-        const content = fs.readFileSync(historyFilePath, 'utf8');
-        return JSON.parse(content);
+        if (fs.existsSync(historyFilePath)) {
+            const content = fs.readFileSync(historyFilePath, 'utf8');
+            return JSON.parse(content);
+        } else {
+            return [];
+        }
     } catch (error) {
         return [];
     }
 }
+
 
 async function executeCommand(command) {
     return new Promise((resolve, reject) => {
